@@ -1,0 +1,44 @@
+name: labs
+
+# Builds the deliberately vulnerable lab targets and runs each chapter's
+# exploit test on real Ubuntu 24.04. This is the book's "the code works" gate.
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { runner: ubuntu-24.04,     arch: x86_64 }
+          - { runner: ubuntu-24.04-arm, arch: aarch64 }
+    runs-on: ${{ matrix.runner }}
+    name: test (${{ matrix.arch }})
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install base toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential gcc g++ gdb make nasm \
+            gcc-aarch64-linux-gnu qemu-user-static \
+            python3 python3-pip ruby ruby-dev \
+            file xxd binutils elfutils patchelf libc6-dbg
+          pip3 install --break-system-packages --no-cache-dir \
+            pwntools ROPgadget ropper pyelftools capstone
+          sudo gem install --no-document one_gadget || true
+
+      - name: Toolchain doctor
+        run: bash scripts/doctor.sh || true
+
+      - name: Build all labs
+        run: bash scripts/build-all.sh
+
+      - name: Run all chapter tests
+        run: bash scripts/test-all.sh

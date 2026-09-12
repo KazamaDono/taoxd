@@ -1,0 +1,16 @@
+# Optional: `docker compose -f lab/docker-compose.yml run --rm lab`
+# Most users just run ./scripts/lab.sh, which wraps this.
+services:
+  lab:
+    build:
+      context: ..
+      dockerfile: lab/Dockerfile
+    image: modern-exploit-dev-lab:24.04
+    cap_add: [SYS_PTRACE]
+    security_opt: ["seccomp=unconfined"]
+    volumes:
+      - ..:/work
+    working_dir: /work
+    stdin_open: true
+    tty: true
+    command: /bin/bash

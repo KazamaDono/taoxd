@@ -1,0 +1,35 @@
+# Build artifacts
+*.o
+*.obj
+*.a
+*.so
+*.exe
+*.out
+a.out
+*.pyc
+__pycache__/
+.pytest_cache/
+core
+core.*
+*.core
+
+# Compiled lab targets (rebuilt by make); keep sources, not binaries
+**/build/
+**/target/*.elf
+**/*.bin
+!**/shellcode/*.bin
+
+# Fuzzing outputs
+**/findings/
+**/corpus_out/
+*.cur_input
+
+# Editor / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Local notes
+scratch/
