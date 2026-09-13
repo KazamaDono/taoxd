@@ -1,0 +1,28 @@
+# Citation File Format 1.2 — https://citation-file-format.github.io/
+# Consumed by GitHub's "Cite this repository" button and by citation
+# managers. Replace the author block and DOI before publishing.
+cff-version: 1.2.0
+title: "Modern Exploit Development — Companion Code"
+message: "If you use this material in academic work or a public writeup, please cite the book (and, if you cite specific labs, this repository)."
+type: software
+authors:
+  - given-names: "Your"
+    family-names: "Name"
+    email: "you@example.com"
+    # orcid: "https://orcid.org/0000-0000-0000-0000"
+repository-code: "https://github.com/YOUR-USERNAME/modern-exploit-dev"
+license: MIT
+keywords:
+  - exploit-development
+  - vulnerability-research
+  - memory-corruption
+  - offensive-security
+  - reverse-engineering
+preferred-citation:
+  type: book
+  title: "Modern Exploit Development: Vulnerability Research and Exploitation on Today's Hardened Systems"
+  authors:
+    - given-names: "Your"
+      family-names: "Name"
+  year: 2026
+  isbn: "TODO-set-after-KDP-assignment"
