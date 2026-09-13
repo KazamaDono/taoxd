@@ -1,0 +1,6 @@
+Chapter 13 demos require hardware or emulation that GitHub-hosted CI runners
+do not reliably provide: Intel CET (Tiger Lake+/Zen 3+) for shadow-stack and
+IBT enforcement, and qemu-user-static + aarch64-linux-gnu cross-toolchain
+with -cpu max for PAC and MTE emulation. The Makefile `test` targets still
+build the demos and invoke them where tooling is available, printing OK or
+SKIP per demo; local reproduction inside the pinned lab image works.
