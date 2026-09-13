@@ -1,0 +1,40 @@
+# Teaching patch: remove one CheckMaps from Maglev's specialization of
+# Array.prototype.at and the matching indexed store for
+# PACKED_DOUBLE_ELEMENTS. The redundancy-elimination pass then trusts
+# that the incoming array's elements kind is unchanged across the
+# specialization, producing the type-confusion class demonstrated in
+# Chapter 21. Applies against the pinned V8 tag in ../README.md.
+#
+# DO NOT SHIP. Lab-only. See the chapter's Rules of Engagement callout.
+
+diff --git a/src/maglev/maglev-graph-builder.cc b/src/maglev/maglev-graph-builder.cc
+--- a/src/maglev/maglev-graph-builder.cc
++++ b/src/maglev/maglev-graph-builder.cc
+@@ -TEACH,7 +TEACH,4 @@ ReduceResult MaglevGraphBuilder::TryReduceArrayPrototypeAt(
+   ValueNode* receiver = args.receiver();
+   ValueNode* index    = args[0];
+-  // Speculation guard: the specialization below reads the i-th slot of
+-  // `receiver`'s elements backing store as an unboxed double. If the
+-  // elements kind changed between feedback collection and this call,
+-  // we must bail out to the generic path.
+-  RETURN_IF_ABORT(BuildCheckMaps(receiver, feedback_maps_));
+   // ---- specialization: load slot as Float64 ----
+   ValueNode* elements = BuildLoadElements(receiver);
+   ValueNode* loaded   = BuildLoadFixedDoubleArrayElement(elements, index);
+   return loaded;
+ }
+diff --git a/src/maglev/maglev-graph-builder.cc b/src/maglev/maglev-graph-builder.cc
+--- a/src/maglev/maglev-graph-builder.cc
++++ b/src/maglev/maglev-graph-builder.cc
+@@ -TEACH,6 +TEACH,3 @@ ReduceResult MaglevGraphBuilder::TryReduceKeyedStoreDouble(
+   ValueNode* receiver = args.receiver();
+   ValueNode* index    = args[0];
+   ValueNode* value    = args[1];
+-  // Same class of guard as above; same class of teaching bug when it is
+-  // absent. The store below writes 8 raw bytes into a slot the runtime
+-  // may believe holds a compressed tagged pointer.
+-  RETURN_IF_ABORT(BuildCheckMaps(receiver, feedback_maps_));
+   ValueNode* elements = BuildLoadElements(receiver);
+   BuildStoreFixedDoubleArrayElement(elements, index, value);
+   return ReduceResult::Done();
+ }

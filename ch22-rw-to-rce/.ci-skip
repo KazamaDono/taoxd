@@ -1,0 +1,1 @@
+Runs against the pinned patched V8 build produced by Ch 21's lab (which itself needs a heavyweight depot_tools + chromium/v8 build). Not exercised by the Linux CI runners; readers build V8 locally and run the exploit against d8 by hand per the chapter.

@@ -1,0 +1,1 @@
+Requires building a pinned V8 tag via depot_tools (~30 min, ~30 GB) which is too heavyweight for Ubuntu 24.04 CI. Build/run scripts and full exploit sources are still shipped; run locally per README.

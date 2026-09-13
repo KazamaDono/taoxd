@@ -1,0 +1,1 @@
+Requires a pinned V8 12.4 d8 build (~30 min compile, multi-GB checkout) that is far too heavy for the shared Ubuntu 24.04 CI runner; scripts are runnable locally via run.sh against the shell built by ch19-browser-anatomy/build-v8.sh.
