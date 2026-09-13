@@ -10,7 +10,7 @@ authors:
     family-names: "Name"
     email: "you@example.com"
     # orcid: "https://orcid.org/0000-0000-0000-0000"
-repository-code: "https://github.com/YOUR-USERNAME/modern-exploit-dev"
+repository-code: "https://github.com/YOUR-USERNAME/taoxd"
 license: MIT
 keywords:
   - exploit-development

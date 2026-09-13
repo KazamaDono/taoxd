@@ -11,8 +11,8 @@ Every listing in the book maps to a real file here. Every runnable lab ships a t
 You need Docker (Linux, macOS, or Windows via WSL2). Everything else is inside the image.
 
 ```bash
-git clone git@github.com:<your-username>/art-of-exploit-development.git
-cd art-of-exploit-development
+git clone git@github.com:KazamaDono/taoxd.git
+cd taoxd
 
 # Build the pinned Ubuntu 24.04 lab image (x86-64 + AArch64 cross tools)
 ./scripts/lab.sh --build
