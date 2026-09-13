@@ -50,14 +50,14 @@ You have two ways to create the remote repo.
 
 ```bash
 cd "C:/Users/User/Desktop/diary/exploit-dev-book/code"
-gh repo create modern-exploit-dev --public --source . --remote origin --description "Companion code for the book Modern Exploit Development" --push
+gh repo create art-of-exploit-development --public --source . --remote origin --description "Companion code for the book The Art of Exploit Development" --push
 ```
 
-**Without the CLI** — create an **empty** repo named `modern-exploit-dev` at <https://github.com/new> (do **not** add a README/license/.gitignore), then:
+**Without the CLI** — create an **empty** repo named `art-of-exploit-development` at <https://github.com/new> (do **not** add a README/license/.gitignore), then:
 
 ```bash
 cd "C:/Users/User/Desktop/diary/exploit-dev-book/code"
-git remote add origin git@github.com:<your-username>/modern-exploit-dev.git
+git remote add origin git@github.com:<your-username>/art-of-exploit-development.git
 git branch -M main
 git push -u origin main
 ```

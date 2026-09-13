@@ -1,6 +1,6 @@
-# Modern Exploit Development — Companion Code
+# The Art of Exploit Development — Companion Code
 
-Working, tested code for every chapter of the book *Modern Exploit Development: Vulnerability Research and Exploitation on Today's Hardened Systems*.
+Working, tested code for every chapter of the book *The Art of Exploit Development: Vulnerability Research and Exploitation on Today's Hardened Systems*.
 
 Every listing in the book maps to a real file here. Every runnable lab ships a test that asserts the exploit does what the chapter claims, and **continuous integration builds the lab and runs those tests on every push** — that is how we keep the code honest.
 
@@ -11,8 +11,8 @@ Every listing in the book maps to a real file here. Every runnable lab ships a t
 You need Docker (Linux, macOS, or Windows via WSL2). Everything else is inside the image.
 
 ```bash
-git clone git@github.com:<your-username>/modern-exploit-dev.git
-cd modern-exploit-dev
+git clone git@github.com:<your-username>/art-of-exploit-development.git
+cd art-of-exploit-development
 
 # Build the pinned Ubuntu 24.04 lab image (x86-64 + AArch64 cross tools)
 ./scripts/lab.sh --build
