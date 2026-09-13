@@ -1,0 +1,1 @@
+Windows kernel lab — builds and runs on Windows 11 24H2 with the WDK and WinDbg TTD; not exercised by the Linux CI runners. See chapter README for the Windows build steps.

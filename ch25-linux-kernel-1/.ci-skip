@@ -1,0 +1,1 @@
+Kernel lab — runs inside a QEMU VM with a vulnerable LKM loaded. Not exercised by the Linux CI runners; readers build the VM per Ch 24's instructions and run the exploit from the guest.

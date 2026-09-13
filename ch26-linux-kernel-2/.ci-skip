@@ -1,0 +1,1 @@
+Kernel lab — runs inside a QEMU VM. Not exercised by the Linux CI runners; readers boot the VM per Ch 24 and run the data-only escalation from the guest.

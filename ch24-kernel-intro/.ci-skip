@@ -1,0 +1,1 @@
+Requires a pinned Linux 6.8 bzImage + vmlinux + BusyBox initramfs built per lab/BUILD.md (10-20 min on a laptop) and a qemu-system-x86_64 boot whose only success signal is a kernel panic on __stack_chk_fail — too heavyweight for the shared Ubuntu CI runner. Build/run scripts and the vulnerable module ship here; see README.md and lab/BUILD.md to reproduce locally.
