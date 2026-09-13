@@ -1,0 +1,6 @@
+{
+    free($p);
+    not: $p = _;
+    not: if ($p == NULL) { _ }
+    $p->$field;
+}

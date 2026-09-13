@@ -1,0 +1,22 @@
+# syzlang description for the lab driver in code/ch24-kernel-intro/vuln.
+# The driver registers a misc device at /dev/vuln with:
+#   - write(): copies attacker-controlled `len` bytes into a 64-byte kernel
+#     stack buffer via copy_from_user with no length check (stack overflow).
+#   - ioctl(VUL_MAGIC): returns &vuln_ioctl to userland (KASLR leak).
+# VUL_MAGIC is defined as _IOW('v', 1, size_t). On 64-bit Linux _IOW
+# expands to (1u<<30) | (sizeof(size_t)<<16) | ('v'<<8) | 1
+#          = 0x40000000 | 0x00080000 | 0x00007600 | 0x1
+#          = 0x40087601  (write-only, size 8, type 'v', nr 1).
+include <linux/fcntl.h>
+resource fd_vuln[fd]                                     # ❶
+
+openat$vuln(fd const[AT_FDCWD], file ptr[in, string["/dev/vuln"]],
+            flags const[O_RDWR], mode const[0]) fd_vuln  # ❷
+
+# Stack overflow: len > 64 overflows the kernel-stack kbuf.
+write$vuln(fd fd_vuln, buf ptr[in, array[int8]],
+           len bytesize[buf]) (timeout[50])              # ❸
+
+# KASLR leak: reads &vuln_ioctl into the caller.
+ioctl$VUL_MAGIC(fd fd_vuln, cmd const[0x40087601],
+                arg ptr[out, int64])                     # ❹

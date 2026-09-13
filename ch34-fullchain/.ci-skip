@@ -1,0 +1,1 @@
+Full-chain capstone: assumes a running vulnerable notesd instance built from the (deliberately-omitted) target/ sources. The prose walks the reader through building and testing it end-to-end; the CI's job is not to reproduce the full chain in seconds but to preserve the recipe as a reference. Readers reproduce locally per the chapter walkthrough.

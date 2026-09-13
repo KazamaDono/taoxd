@@ -1,0 +1,30 @@
+rules:
+  - id: unchecked-memcpy-fixed-dest
+    message: >
+      memcpy into a fixed-size buffer without a length check against
+      sizeof(dest). Confirm $LEN is bounded before this call.
+    languages: [c, cpp]
+    severity: WARNING
+    metadata:
+      category: security
+      cwe: "CWE-120: Buffer Copy without Checking Size of Input"
+    patterns:
+      - pattern: |                                            # ❶
+          $T $DST[$N];
+          ...
+          memcpy($DST, $SRC, $LEN);
+      - pattern-not: |                                        # ❷
+          $T $DST[$N];
+          ...
+          if (<... $LEN <= sizeof($DST) ...>) { ... }
+          ...
+          memcpy($DST, $SRC, $LEN);
+      - pattern-not: |                                        # ❸
+          $T $DST[$N];
+          ...
+          if (<... $LEN < sizeof($DST) ...>) { ... }
+          ...
+          memcpy($DST, $SRC, $LEN);
+      - metavariable-comparison:                              # ❹
+          metavariable: $N
+          comparison: $N > 0

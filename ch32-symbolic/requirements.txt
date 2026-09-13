@@ -1,0 +1,5 @@
+# Pinned toolchain for Chapter 32 (Symbolic and Concolic Execution).
+# angr 9.2.x on Python 3.12 (Ubuntu 24.04 default).
+angr>=9.2.100,<9.3
+claripy>=9.2.100,<9.3
+pytest>=8.0,<9

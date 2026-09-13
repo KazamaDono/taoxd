@@ -1,0 +1,6 @@
+name: exploit-dev-book/ch31-static-variant
+version: 0.0.1
+dependencies:
+  codeql/cpp-all: ^2.0.0
+library: false
+suites: []

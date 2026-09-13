@@ -1,0 +1,9 @@
+# CSV structural tokens the mutator should be able to splice at any offset.
+sep_comma=","
+sep_tab="\t"
+newline_lf="\n"
+newline_crlf="\r\n"
+quote="\""
+esc_dquote="\"\""
+esc_backslash="\\"
+bom="\xef\xbb\xbf"

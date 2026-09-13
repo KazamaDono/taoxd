@@ -1,0 +1,1 @@
+Patch-diff lab needs BinDiff (or Diaphora) and Ghidra to reproduce the diff walkthrough. Not exercised by the Linux CI runners; readers do the diffing in Ghidra/BinDiff locally per the chapter.
