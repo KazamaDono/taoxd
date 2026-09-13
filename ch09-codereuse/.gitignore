@@ -1,0 +1,9 @@
+# Built from source by `make` / `make test` — never committed.
+srop/vuln
+srop/vuln_arm64
+dlresolve/vuln
+
+# Test scratch
+*.o
+*.log
+__pycache__/
