@@ -1,0 +1,7 @@
+# Built from source by `make` — never committed.
+crackme-x86_64
+crackme-x86_64.stripped
+crackme-arm64
+crackme-arm64.stripped
+*.run
+__pycache__/

@@ -18,6 +18,9 @@ core.*
 **/target/*.elf
 **/*.bin
 !**/shellcode/*.bin
+# Chapter 2 smoke-test binaries (rebuilt by `make -C ch02-lab`)
+ch02-lab/hello_overflow
+ch02-lab/hello_overflow_arm64
 
 # Fuzzing outputs
 **/findings/

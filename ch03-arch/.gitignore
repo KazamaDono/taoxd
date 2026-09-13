@@ -1,0 +1,20 @@
+# Built from source by `make` / `make arm` / `make test` — never committed.
+triangle
+args8
+aslr_map
+*.arm
+gotplt/greeter
+gotplt/greeter-fullrelro
+gotplt/greeter-nofplt
+
+# Test scratch (logs, intermediate objects, disassembly captures)
+*.o
+*.log
+a1.txt
+a2.txt
+pack.native.txt
+pack.arm.txt
+cmp.txt
+plt.arm.txt
+.trace.rc
+__pycache__/

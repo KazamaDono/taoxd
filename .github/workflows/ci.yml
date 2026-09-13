@@ -27,8 +27,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             build-essential gcc g++ gdb make nasm \
-            gcc-aarch64-linux-gnu qemu-user-static \
-            python3 python3-pip ruby ruby-dev \
+            gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu qemu-user-static \
+            python3 python3-pip ruby ruby-dev tmux \
             file xxd binutils elfutils patchelf libc6-dbg
           pip3 install --break-system-packages --no-cache-dir \
             pwntools ROPgadget ropper pyelftools capstone

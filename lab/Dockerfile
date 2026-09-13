@@ -18,8 +18,8 @@ RUN set -eux; \
         python3 python3-pip python3-venv python3-dev \
         ruby ruby-dev \
         git curl wget file xxd bsdmainutils binutils elfutils \
-        ltrace strace ltrace patchelf \
-        vim less netcat-openbsd socat unzip zip ca-certificates \
+        ltrace strace patchelf \
+        vim less netcat-openbsd socat unzip zip ca-certificates tmux \
         libc6-dbg libssl-dev zlib1g-dev; \
     rm -rf /var/lib/apt/lists/*
 
