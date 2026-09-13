@@ -1,0 +1,25 @@
+# Force LF line endings on shell scripts (Windows dev, Linux CI runs them).
+*.sh    text eol=lf
+*.py    text eol=lf
+Makefile text eol=lf
+*.mk    text eol=lf
+# Normalize other text but keep OS-native on checkout.
+*.md    text
+*.c     text
+*.h     text
+*.cpp   text
+*.cc    text
+*.rs    text
+*.go    text
+*.js    text
+*.json  text
+*.yml   text
+*.yaml  text
+# Binaries — never touch.
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.pdf   binary
+*.zip   binary
+*.tar   binary
+*.gz    binary
