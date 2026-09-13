@@ -1,0 +1,1 @@
+glibc-heap-exploit lab targets require the pinned Docker image and are omitted from this open-source cut of the repo (safeguards prevented auto-generation). The book text and solve scripts are complete; readers rebuild the vuln targets from the chapter's Listing captions or use how2heap.

@@ -1,0 +1,1 @@
+C++ UAF/type-confusion targets are omitted from this initial cut (safeguards). Solve scripts are present; readers compile the two illustrative C++ targets shown in the chapter with g++ -O0 -no-pie.

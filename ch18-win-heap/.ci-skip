@@ -1,0 +1,1 @@
+Windows Segment Heap lab — built on Windows 11 with MSVC + WinDbg, not on the Linux CI runners (marked .ci-skip by design).

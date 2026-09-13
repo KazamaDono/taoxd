@@ -1,0 +1,16 @@
+# Deterministic script driven under `setarch -R` (ASLR off).
+# Allocates four 0x30 chunks, frees three of them into the tcache,
+# then dumps and leaks so the safe-linking mangle is visible.
+alloc 48
+alloc 48
+alloc 48
+alloc 48
+dump 0
+free 0
+free 1
+free 2
+tcache
+leak 2
+leak 1
+leak 0
+quit
