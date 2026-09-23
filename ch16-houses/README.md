@@ -20,7 +20,7 @@ Companion solve scripts for Chapter 16 of *Modern Exploit Development*. **Lab us
 - **House of Kiwi / House of IO** — work with the FSOP-via-exit path.
 - **House of Force** — **dead** since the `top` chunk size check landed in 2.29.
 - **House of Orange** — **dead** since the `_IO_str_jumps` scrub in 2.28.
-- **Unsorted-bin attack for `global_max_fast`** — largely dead; the write primitive still exists but the FSOP targets it enabled are what you want now.
+- **Unsorted-bin attack for `global_max_fast`** — largely dead; the write primitive still exists but the FSOP targets it enables are what you want now.
 
 The chapter's viability matrix is the source of truth per libc version.
 
