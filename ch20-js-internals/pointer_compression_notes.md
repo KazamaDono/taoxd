@@ -28,7 +28,7 @@ The cage base is per-isolate and per-run (ASLR randomises it).  In
 generated code V8 keeps it in the register that
 `src/codegen/<arch>/register-<arch>.h` names
 `kPtrComprCageBaseRegister` — currently `r14` on x86-64 and `x28` on
-AArch64 for the 12.4 tree, but check the header before you hard-code it.  Every two heap-object addresses printed by `%DebugPrint` share
+AArch64 for the 12.4 tree, but check the header before you hard-code it.  Every pair of heap-object addresses printed by `%DebugPrint` shares
 the same upper 32 bits; that is the cage tag.
 
 ### Object header offsets (12.4, pointer-compressed build)
