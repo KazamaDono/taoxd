@@ -17,6 +17,8 @@
  *
  * LAB USE ONLY. Compiled with -fstack-protector-strong -no-pie -O1.
  */
+/* This target defines its own win() below; suppress the harness one. */
+#define MED_HARNESS_NO_WIN
 #include "harness.h"
 #include <string.h>
 #include <unistd.h>

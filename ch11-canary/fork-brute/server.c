@@ -16,6 +16,8 @@
  * LAB USE ONLY. Compiled -fstack-protector-strong so every child has the
  * canary in the way; -no-pie so win()'s address is a fixed constant.
  */
+/* This target defines its own win() below; suppress the harness one. */
+#define MED_HARNESS_NO_WIN
 #include "harness.h"
 #include <arpa/inet.h>
 #include <errno.h>

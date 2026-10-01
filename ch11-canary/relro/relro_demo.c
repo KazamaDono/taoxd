@@ -13,6 +13,8 @@
  *
  * LAB USE ONLY.
  */
+/* This target defines its own win() below; suppress the harness one. */
+#define MED_HARNESS_NO_WIN
 #include "harness.h"
 #include <stdio.h>
 #include <stdint.h>

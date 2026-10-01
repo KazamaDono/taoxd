@@ -26,9 +26,12 @@
 set -euo pipefail
 
 self_test() {
-    local tmp
+    # NB: no `trap ... RETURN` for cleanup — a RETURN trap set here is global
+    # and would re-fire when *other* functions (probe, main) return, where the
+    # local `tmp` is unset and `set -u` turns that into a fatal
+    # "tmp: unbound variable". Clean up explicitly instead.
+    local tmp rc
     tmp="$(mktemp -d)"
-    trap 'rm -rf "$tmp"' RETURN
 
     # Emit a tiny x86-64 ELF that contains a synthesized kCFI check
     # sequence for the pattern-matcher to find.  We assemble it with
@@ -49,7 +52,9 @@ ASM
     ld -o "$tmp/probe.elf" "$tmp/probe.o" 2>/dev/null || true
     # ld may complain about the missing _start alignment; the .o is enough
     # for objdump to disassemble.
-    probe "$tmp/probe.o"
+    probe "$tmp/probe.o" && rc=0 || rc=$?
+    rm -rf "$tmp"
+    return "$rc"
 }
 
 probe() {
