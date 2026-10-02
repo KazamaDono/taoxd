@@ -54,7 +54,7 @@ test: server
 	  echo "== starting fork-brute server on 127.0.0.1:4011 =="; \
 	  $$RUN ./server >server.log 2>&1 & \
 	  echo $$! > server.pid; \
-	  trap 'kill $$(cat server.pid) 2>/dev/null; rm -f server.pid' EXIT; \
+	  trap '[ -f server.pid ] && kill $$(cat server.pid) 2>/dev/null; rm -f server.pid' EXIT; \
 	  for i in $$(seq 1 40); do \
 	    if ss -ltn 2>/dev/null | grep -q :4011 || \
 	       (echo > /dev/tcp/127.0.0.1/4011) 2>/dev/null; then break; fi; \

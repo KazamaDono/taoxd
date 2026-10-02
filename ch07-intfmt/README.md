@@ -31,9 +31,12 @@ The `fmt` target is compiled **without** `_FORTIFY_SOURCE` on purpose — Ubuntu
 gcc enables `_FORTIFY_SOURCE=3` by default when optimizing, which rewrites
 `printf` to `__printf_chk` and refuses `%n` in a writable format. Disabling it is
 what makes the `%n` arbitrary write reachable at all. The `intmul` target keeps
-FORTIFY at Ubuntu's default **on** to make the point of exercise 4: FORTIFY does
-nothing for an integer-overflow size bug. Every flag is commented in the
-`Makefile`.
+FORTIFY **on**, pinned at `_FORTIFY_SOURCE=2`, to make the point of exercise 4:
+FORTIFY does nothing for an integer-overflow size bug. The level is pinned rather
+than left at "Ubuntu's default" because Ubuntu 24.04's gcc flipped that default to
+level 3, whose runtime `__builtin_dynamic_object_size` tracks the wrapped `malloc`
+size and aborts the `fread` — a toolchain change that would otherwise break this
+lab. Every flag is commented in the `Makefile`.
 
 ## Expected `make test` output
 

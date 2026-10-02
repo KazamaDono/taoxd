@@ -67,6 +67,7 @@ semgrep-check:
 	 else \
 	   echo "[ch31] semgrep not on PATH — installing $(SEMGREP_VER) into $(VENV)"; \
 	   python3 -m venv $(VENV); \
+	   $(VENV)/bin/pip install --quiet --disable-pip-version-check 'setuptools<81'; \
 	   $(VENV)/bin/pip install --quiet --disable-pip-version-check \
 	     'semgrep==$(SEMGREP_VER)' \
 	     || $(VENV)/bin/pip install --quiet --disable-pip-version-check semgrep; \

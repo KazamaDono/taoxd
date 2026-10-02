@@ -111,24 +111,49 @@ static void leak_cmd(int i) {
            i, p, raw, reveal);
 }
 
-/* tcache_perthread_struct is the FIRST allocated chunk on any heap. Its
+/* tcache_perthread_struct is the FIRST allocated chunk on the main heap. Its
  * user area begins with uint16_t counts[64] followed by tcache_entry*
- * entries[64]. We recover it by walking backwards from any live chunk to
- * page start and locating the 0x291-sized allocated chunk.               */
+ * entries[64]. We recover it by anchoring at the [heap] segment base and
+ * locating the 0x291-sized allocated chunk that opens the arena.
+ *
+ * NOTE: we must NOT assume "page start of some live chunk == heap base".
+ * The heap base is page-aligned, but libc's own startup allocations (e.g.
+ * stdio/locale buffers) sit between the tcache header and the first user
+ * chunk, so user chunks --- and any fresh `probe` carved from the top ---
+ * routinely land one or more pages past the heap base. Scanning only the
+ * probe's page therefore misses the header entirely. Read the real base of
+ * the [heap] mapping from /proc/self/maps instead.                        */
 static void tcache_cmd(void) {
     /* Force at least one allocation so tcache exists. */
     void *probe = malloc(0x18);
-    /* tcache header chunk sits just before the first user chunk on the
-     * arena. Its header size is 0x291 on 64-bit (0x290 + PREV_INUSE).   */
-    uintptr_t page = ((uintptr_t)probe) & ~0xfffUL;
-    uintptr_t scan = page;
+
+    /* Resolve the [heap] segment bounds (page-aligned base + end). */
+    uintptr_t heap_base = 0, heap_end = 0;
+    FILE *maps = fopen("/proc/self/maps", "r");
+    if (maps) {
+        char line[256];
+        while (fgets(line, sizeof line, maps)) {
+            if (strstr(line, "[heap]")) {
+                sscanf(line, "%lx-%lx", &heap_base, &heap_end);
+                break;
+            }
+        }
+        fclose(maps);
+    }
+
+    /* Scan forward from the heap base for the tcache header chunk. Its
+     * header size is 0x291 on 64-bit glibc 2.39 (0x290 + PREV_INUSE):
+     * uint16_t counts[64] (0x80) + tcache_entry* entries[64] (0x200)
+     * = 0x280 payload, +0x10 header, rounded = 0x290.                   */
     uintptr_t *tc_user = NULL;
-    for (int k = 0; k < 0x1000/8; k++) {
-        uintptr_t *h = (uintptr_t*)(scan + k*8);
-        if (h[1] == 0x291) { tc_user = h + 2; break; }
+    if (heap_base && heap_end > heap_base) {
+        for (uintptr_t scan = heap_base; scan + 16 <= heap_end; scan += 8) {
+            uintptr_t *h = (uintptr_t*)scan;
+            if (h[1] == 0x291) { tc_user = h + 2; break; }
+        }
     }
     free(probe);
-    if (!tc_user) { printf("tcache: header not found on first page\n"); return; }
+    if (!tc_user) { printf("tcache: header not found in [heap] segment\n"); return; }
     uint16_t *counts = (uint16_t*)tc_user;
     printf("tcache counts (non-zero bins):\n");
     int any = 0;

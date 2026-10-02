@@ -15,6 +15,17 @@
 #   -z noexecstack       : NX ON (default on Ubuntu 24.04).  Explicit so
 #                          the intent is visible when reading the build.
 #   -D_GNU_SOURCE        : exposes RTLD_DEFAULT for the dlsym-based leak.
+#   -U_FORTIFY_SOURCE \
+#   -D_FORTIFY_SOURCE=0  : FORTIFY OFF.  The pinned lab image's gcc enables
+#                          _FORTIFY_SOURCE=3 by default at -O1, which rewrites
+#                          `read(0, name, 512)` into `__read_chk(.., 512, 64)`.
+#                          Because the 512-byte request exceeds the 64-byte
+#                          object size, __chk_fail() aborts the process
+#                          (SIGABRT) *before* the overflow can reach the saved
+#                          return address -- the intended vulnerability never
+#                          fires.  We must disable FORTIFY explicitly so the
+#                          teaching overflow is genuine; it is a buffer-size
+#                          check (Ch12 material), not the Ch10 subject.
 #   -O1 -fno-inline      : keep `banner`, `handle`, `main` as separate
 #                          real function frames so the buffer→RIP offset
 #                          in the solver (72) matches the layout.
@@ -26,13 +37,15 @@
 # a fresh process each time -- fresh execve, fresh libc base.
 
 CC       ?= gcc
-CFLAGS   ?= -O1 -Wall -Wno-format-security -fno-inline \
-            -fno-stack-protector -no-pie -D_GNU_SOURCE
+CFLAGS   ?= -O1 -Wall -Wno-format-security -Wno-stringop-overflow -fno-inline \
+            -fno-stack-protector -no-pie -D_GNU_SOURCE \
+            -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=0
 LDFLAGS  ?= -Wl,-z,relro,-z,now -Wl,-z,noexecstack
 
 AARCH64_CC ?= aarch64-linux-gnu-gcc
-AARCH64_CFLAGS ?= -O1 -Wall -Wno-format-security -fno-inline \
-                  -fno-stack-protector -D_GNU_SOURCE
+AARCH64_CFLAGS ?= -O1 -Wall -Wno-format-security -Wno-stringop-overflow \
+                  -fno-inline -fno-stack-protector -D_GNU_SOURCE \
+                  -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=0
 
 PYTHON ?= python3
 
