@@ -19,3 +19,8 @@ capstone==5.0.1
 unicorn==2.0.1.post1
 keystone-engine==0.9.2
 pyelftools==0.31
+# pytest is used by the ch10/ch28 test harnesses. Pin it in the image so those
+# chapters don't pip-install it at test time — an unpinned runtime install needs
+# network access and hangs on a constrained/offline host (the ch10 check-tools
+# stall). CI installs this same file, so CI and the lab stay in lockstep.
+pytest==8.3.4
