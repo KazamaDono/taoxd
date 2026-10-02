@@ -5,10 +5,11 @@
  * child inherits the parent's TCB, which holds the per-thread stack_guard.
  * That is the crack the byte-by-byte canary brute widens.
  *
- * The bug: handle() recv()s 200 bytes into a 64-byte buffer, then writes
- * "ok\n" and returns. The canary check on return is what the brute probes:
- * a child that acks "ok" got the canary right; a child that dies without
- * acking got it wrong.
+ * The bug: handle() recv()s 200 bytes into a 64-byte buffer and returns. The
+ * canary check in handle()'s epilogue is what the brute probes: the child
+ * writes "ok\n" only AFTER handle() returns, so a child that acks "ok" got
+ * the canary right, while a child that dies in the epilogue (__stack_chk_fail)
+ * never acks -- it got it wrong. That survived-vs-smashed ack is the oracle.
  *
  * The stack layout is nailed to 72 bytes buf-to-canary via a struct pad --
  * matching Chapter 11's OFFSET = BUF_LEN + 8 exactly.
@@ -60,9 +61,13 @@ static void handle(int cfd)
     ssize_t n = recv(cfd, f.buf, 200, 0);
     (void)n;
 
-    write(cfd, "ok\n", 3);                /* the brute's oracle */
     if (f.pad == 0xdeadbeefcafebabeL)     /* prevent DCE */
         write(cfd, "?", 1);
+    /* NB: the "ok\n" ack is deliberately NOT written here. It is written by
+     * the caller AFTER handle() returns -- i.e. only once the -fstack-
+     * protector-strong epilogue has verified the canary. A child whose guess
+     * was wrong aborts in that epilogue (__stack_chk_fail) and never acks,
+     * which is precisely the survived-vs-smashed oracle the brute probes. */
 }
 
 int main(void)
@@ -94,7 +99,9 @@ int main(void)
         pid_t p = fork();
         if (p == 0) {
             close(sfd);
-            handle(cfd);
+            handle(cfd);                  /* canary verified on return */
+            write(cfd, "ok\n", 3);        /* the brute's oracle: acks ONLY
+                                           * if the canary survived handle() */
             close(cfd);
             _exit(0);
         } else if (p < 0) {

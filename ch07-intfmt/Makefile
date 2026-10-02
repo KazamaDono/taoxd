@@ -33,12 +33,24 @@ FMT_CFLAGS = -no-pie -fno-stack-protector -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=0 
 # ---- intmul: integer overflow -> undersized malloc -> heap overflow ---------
 #   -O1                   : the 32-bit multiply wraps identically at any -O; we
 #                           pin -O1 for a stable, deterministic heap layout.
-#   FORTIFY is left at Ubuntu's default (ON) ON PURPOSE: it does NOTHING for
-#                           this class -- it guards bounds it can prove, not a
-#                           wrapped size calc -- which is exercise 4. The bug is
-#                           reachable regardless.
+#   -D_FORTIFY_SOURCE=2   : FORTIFY stays ON ON PURPOSE -- it does NOTHING for
+#                           this class: at level 2 fortify bounds a buffer only
+#                           by __builtin_object_size (a COMPILE-TIME size), which
+#                           is unknown for a malloc'd pointer, so the fread is
+#                           left unchecked and the wrapped-size heap overflow is
+#                           reachable -- that is exercise 4.
+#                           We PIN level 2 for toolchain reproducibility: Ubuntu
+#                           24.04's gcc 13 flipped the *default* to level 3,
+#                           whose __builtin_dynamic_object_size tracks the malloc
+#                           size at RUNTIME and turns fread into __fread_chk,
+#                           which aborts the overflow ("buffer overflow
+#                           detected") before it can reach the victim. Relying on
+#                           "Ubuntu's default" made the lab build-dependent; the
+#                           explicit level keeps the exercise's point (FORTIFY
+#                           does not stop an integer-overflow size bug) true and
+#                           the exploit deterministic across toolchains.
 #   -fno-stack-protector  : minimal layout; the corruption is on the heap.
-INTMUL_CFLAGS = -O1 -g -fno-stack-protector
+INTMUL_CFLAGS = -O1 -g -fno-stack-protector -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2
 
 # ---- intmul_fixed: the remediation (C23 checked multiply) -------------------
 #   -std=c2x              : enable C23 so <stdckdint.h>'s ckd_mul is visible on
