@@ -23,7 +23,12 @@ FROM ubuntu:24.04@sha256:008173c23f95b170204355c12626cb5a965d779a7e1283b09e9cffb
 ENV DEBIAN_FRONTEND=noninteractive \
     TZ=UTC \
     LANG=C.UTF-8 \
-    PIP_BREAK_SYSTEM_PACKAGES=1
+    PIP_BREAK_SYSTEM_PACKAGES=1 \
+    PWNLIB_NOTERM=1
+# PWNLIB_NOTERM=1: never let pwntools enter interactive "terminal mode" inside
+# the lab. With a real TTY it otherwise seizes the terminal and the
+# format-string / brute solves hang on cursor-position queries (CI has no TTY,
+# so this never bit CI). It does not change exploit behavior.
 
 # ---- Core toolchain (x86-64) + AArch64 cross + emulation --------------------
 RUN set -eux; \

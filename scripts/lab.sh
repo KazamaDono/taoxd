@@ -20,9 +20,15 @@ fi
 
 # SYS_PTRACE + unconfined seccomp so gdb and `setarch -R` (ASLR off) work
 # *inside the container only*. The host is never modified.
+# PWNLIB_NOTERM=1 disables pwntools' interactive "terminal mode". With a real
+# TTY (we pass -it) pwntools otherwise takes over the terminal and the
+# format-string / brute solves hang waiting on cursor-position replies. Turning
+# it off changes nothing about how the exploits run (CI runs without a TTY
+# anyway) — it just keeps the labs from stalling in an interactive terminal.
 exec docker run --rm -it \
   --cap-add=SYS_PTRACE \
   --security-opt seccomp=unconfined \
+  -e PWNLIB_NOTERM=1 \
   -v "$REPO_ROOT":/work \
   -w /work \
   "$IMAGE" "${@:-bash}"
